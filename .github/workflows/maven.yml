@@ -26,7 +26,7 @@ jobs:
       - name: Upload JAR to GitHub Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: spring_test  # GitHub 리포지토리 제목으로 설정
+
           path: target/*.jar
 
       - name: Configure AWS credentials
