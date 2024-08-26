@@ -38,20 +38,33 @@ jobs:
         run: |
           aws s3 cp app-${{ github.sha }}.zip s3://springcicd/app-${{ github.sha }}.zip
 
-      - name: Deploy to EC2 with CodeDeploy
-        run: |
-          aws deploy create-deployment \
-            --application-name sss \
-            --deployment-group-name sss \
-            --s3-location bucket=springcicd,key=app-${{ github.sha }}.zip,bundleType=zip \
-            --file-exists-behavior OVERWRITE
-      - name: Stop active deployment and start new one
+      - name: Wait for active deployment to complete or stop it
         run: |
           ACTIVE_DEPLOYMENT=$(aws deploy list-deployments --application-name sss --deployment-group-name sss --include-only-statuses InProgress --query 'deployments[0]' --output text)
           if [ "$ACTIVE_DEPLOYMENT" != "None" ]; then
-            echo "Stopping active deployment: $ACTIVE_DEPLOYMENT"
-            aws deploy stop-deployment --deployment-id $ACTIVE_DEPLOYMENT
+            echo "Active deployment found: $ACTIVE_DEPLOYMENT"
+            WAIT_TIME=0
+            MAX_WAIT_TIME=300  # 5 minutes
+            while [ $WAIT_TIME -lt $MAX_WAIT_TIME ]; do
+              STATUS=$(aws deploy get-deployment --deployment-id $ACTIVE_DEPLOYMENT --query 'deploymentInfo.status' --output text)
+              if [ "$STATUS" != "InProgress" ]; then
+                echo "Deployment $ACTIVE_DEPLOYMENT completed with status: $STATUS"
+                break
+              fi
+              echo "Waiting for deployment to complete... (${WAIT_TIME}s)"
+              sleep 30
+              WAIT_TIME=$((WAIT_TIME + 30))
+            done
+            if [ $WAIT_TIME -ge $MAX_WAIT_TIME ]; then
+              echo "Deployment did not complete within 5 minutes. Stopping it."
+              aws deploy stop-deployment --deployment-id $ACTIVE_DEPLOYMENT
+            fi
+          else
+            echo "No active deployments found."
           fi
+
+      - name: Deploy to EC2 with CodeDeploy
+        run: |
           aws deploy create-deployment \
             --application-name sss \
             --deployment-group-name sss \
