@@ -25,10 +25,7 @@ jobs:
 
       - name: Zip the build directory
         run: |
-          cp appspec.yml target/
-          cd target
-          zip -r ../app-${{ github.sha }}.zip * ../appspec.yml ../scripts/
-          cd ..
+          zip -r app-${{ github.sha }}.zip target/*.jar appspec.yml scripts/
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -73,3 +70,9 @@ jobs:
             --deployment-group-name sss \
             --s3-location bucket=springcicd,key=app-${{ github.sha }}.zip,bundleType=zip \
             --file-exists-behavior OVERWRITE
+      - name: Zip the build directory
+        run: |
+          cp appspec.yml target/
+          cd target
+          zip -r ../app-${{ github.sha }}.zip * ../appspec.yml ../scripts/
+          cd ..
