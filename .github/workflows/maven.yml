@@ -43,6 +43,7 @@ jobs:
       - name: Deploy to EC2 with CodeDeploy
         run: |
           aws deploy create-deployment \
-            --application-name sss\
-            --deployment-group-name sss\
-            --s3-location bucket=springcicd,key=app-${{ github.sha }}.jar,bundleType=jar
+            --application-name sss \
+            --deployment-group-name sss \
+            --s3-location bucket=springcicd,key=app-${{ github.sha }}.jar,bundleType=zip \
+            --file-exists-behavior OVERWRITE
