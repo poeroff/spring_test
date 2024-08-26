@@ -64,6 +64,7 @@ jobs:
           fi
       - name: Check ZIP contents
         run: unzip -l app-${{ github.sha }}.zip
+
       - name: Zip the build directory
         run: |
           zip -r app-${{ github.sha }}.zip target/*.jar appspec.yml scripts/
