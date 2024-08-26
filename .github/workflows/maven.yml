@@ -38,7 +38,7 @@ jobs:
 
       - name: Upload JAR to S3
         run: |
-          aws s3 cp target/*.jar s3://springcicd /app-${{ github.sha }}.jar
+          aws s3 cp target/*.jar s3://springcicd/app-${{ github.sha }}.jar
 
       - name: Deploy to EC2 with CodeDeploy
         run: |
