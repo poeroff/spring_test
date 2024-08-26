@@ -1,10 +1,9 @@
 version: 0.0
 os: linux
 files:
-  - source: target/*.jar
+  - source: /
     destination: /home/ubuntu/myapp
-  - source: scripts
-    destination: /home/ubuntu/myapp/scripts
+
 permissions:
   - object: /home/ubuntu/myapp
     owner: ubuntu
