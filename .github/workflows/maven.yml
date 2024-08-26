@@ -73,15 +73,4 @@ jobs:
             --s3-location bucket=springcicd,key=app-${{ github.sha }}.zip,bundleType=zip \
             --file-exists-behavior OVERWRITE
 
-      - name: Verify deployment
-        run: |
-          aws ec2 send-command \
-            --instance-ids <your-instance-id> \
-            --document-name "AWS-RunShellScript" \
-            --parameters commands=["ls -l /home/ubuntu/myapp"]
-      - name: Check CodeDeploy logs
-        run: |
-          aws ec2 send-command \
-            --instance-ids <your-instance-id> \
-            --document-name "AWS-RunShellScript" \
-            --parameters commands=["cat /var/log/aws/codedeploy-agent/codedeploy-agent.log"]
+     
