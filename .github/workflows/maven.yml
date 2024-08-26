@@ -65,10 +65,6 @@ jobs:
       - name: Check ZIP contents
         run: unzip -l app-${{ github.sha }}.zip
 
-      - name: Zip the build directory
-        run: |
-          zip -r app-${{ github.sha }}.zip target/*.jar appspec.yml scripts/
-
       - name: Deploy to EC2 with CodeDeploy
         run: |
           aws deploy create-deployment \
