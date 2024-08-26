@@ -45,3 +45,15 @@ jobs:
             --deployment-group-name sss \
             --s3-location bucket=springcicd,key=app-${{ github.sha }}.zip,bundleType=zip \
             --file-exists-behavior OVERWRITE
+      - name: Stop active deployment and start new one
+        run: |
+          ACTIVE_DEPLOYMENT=$(aws deploy list-deployments --application-name sss --deployment-group-name sss --include-only-statuses InProgress --query 'deployments[0]' --output text)
+          if [ "$ACTIVE_DEPLOYMENT" != "None" ]; then
+            echo "Stopping active deployment: $ACTIVE_DEPLOYMENT"
+            aws deploy stop-deployment --deployment-id $ACTIVE_DEPLOYMENT
+          fi
+          aws deploy create-deployment \
+            --application-name sss \
+            --deployment-group-name sss \
+            --s3-location bucket=springcicd,key=app-${{ github.sha }}.zip,bundleType=zip \
+            --file-exists-behavior OVERWRITE
