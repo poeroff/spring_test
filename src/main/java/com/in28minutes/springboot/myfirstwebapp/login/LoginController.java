@@ -26,7 +26,7 @@ public class LoginController {
     @RequestMapping("HELLO")
     @ResponseBody
     public String HELLO(){
-        return "hellossssss";
+        return "hell";
     }
     @RequestMapping(value="login", method = RequestMethod.POST)
     public  String gotoWelcompage(@RequestParam String name, @RequestParam String password, ModelMap model){
